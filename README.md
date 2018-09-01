@@ -34,7 +34,7 @@ This program reproduces a problem that we've seen with Jersey Client, in which i
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     InputStream is = con.getInputStream();
 
-                    // This prevents the duplicate requests.
+                    // Closing the GET response seems to prevents the duplicate requests.
                     // is.close();
                 } catch (IOException e) {
                 }
