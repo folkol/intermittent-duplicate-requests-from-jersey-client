@@ -1,6 +1,6 @@
 # Duplicate requests from Jersey Client
 
-This program reproduces a problem that we've seen with Jersey Client, in which it will duplicate some requests.
+This program reproduces a problem that we've seen with Jersey Client, in which it will duplicate some requests.
 
 *N.b. I haven't found the root cause yet, but it seems to happen if:*
 
@@ -10,7 +10,7 @@ This program reproduces a problem that we've seen with Jersey Client, in which i
 ## Notes
 
 - It is not enough to ignore the PUT response, it seems to require a different endpoint
-- It happens occationally with a single threaded client loop – but the ExecutorService makes it much more frequent.
+- It happens occationally with a single threaded client loop – but the ExecutorService makes it much more frequent.
 
 ## Example
 
