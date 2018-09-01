@@ -20,8 +20,7 @@ import static org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory.
 
 /**
  * <ul>
- * <li>http://jersey.576304.n2.nabble.com/Is-Jersey-Jersey-client-duplicating-requests-td6570645.html</li>
- * <li>https://stackoverflow.com/questions/37956741/jersey-resource-receiving-duplicate-requests-from-jersey-client</li>
+ * 
  * </ul>
  */
 public class Main {
@@ -41,8 +40,8 @@ public class Main {
         }
 
         @GET
-        public int get(@QueryParam("id") int id) {
-            return ids[id];
+        public String get() {
+            return "Hello, world!";  // The get method needs to produce an entity, which one doesn't matter.
         }
     }
 
@@ -55,6 +54,7 @@ public class Main {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(BASE_URI);
 
+        // The duplicate requests happens in single threaded mode as well, but this makes it more frequent.
         ExecutorService es = Executors.newFixedThreadPool(N_THREADS);
         for (int i = 0; i < N; i++) {
             int id = i;
@@ -63,9 +63,11 @@ public class Main {
                 response.close();
             });
             es.submit(() -> {
-                Response response = target.queryParam("id", 0).request().get();
-//                response.close();
-//                response.readEntity(String.class);
+                Response response = target.request().get();
+
+                // Either of these two lines seems to prevent the double requests.
+                // response.close();
+                // response.readEntity(String.class);
             });
         }
 
