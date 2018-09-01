@@ -18,11 +18,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 import static org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory.*;
 
-/**
- * <ul>
- * 
- * </ul>
- */
 public class Main {
     static final int N_THREADS = 100;
     static final String BASE_URI = "http://localhost:8080/";
@@ -54,7 +49,6 @@ public class Main {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(BASE_URI);
 
-        // The duplicate requests happens in single threaded mode as well, but this makes it more frequent.
         ExecutorService es = Executors.newFixedThreadPool(N_THREADS);
         for (int i = 0; i < N; i++) {
             int id = i;
@@ -76,4 +70,3 @@ public class Main {
         server.shutdown();
     }
 }
-
