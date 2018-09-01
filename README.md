@@ -10,8 +10,37 @@ This program reproduces a problem that we've seen with Jersey Client, in which i
 ## Notes
 
 - It is not enough to ignore the PUT response, it seems to require a different endpoint
-- It happens occationally with a single threaded client loop – but the ExecutorService makes it much more frequently.
-- `org/glassfish/jersey/client/HttpUrlConnectorProvider.java:278` does NOT call into `return (HttpURLConnection) url.openConnection()` more than once, so the duplicate seems to happen in HttpURLConnection 
+- It happens occationally with a single threaded client loop – but the ExecutorService makes it much more frequent.
+- `org/glassfish/jersey/client/HttpUrlConnectorProvider.java:278` does NOT call into `return (HttpURLConnection) url.openConnection()` more than once, so the duplicate seems to happen in HttpURLConnection
+
+*N.b. This will also cause duplicate requests, which suggests that it isn't the Jersey Client that is at fault...*
+
+```
+            es.submit(() -> {
+                try {
+                    URL url = new URL(String.format("%s?id=%s", BASE_URI, id));
+
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("PUT");
+                    con.setDoOutput(true);
+                    InputStream is = con.getInputStream();
+                    is.close();
+                } catch (IOException e) {
+                }
+            });
+            es.submit(() -> {
+                try {
+                    URL url = new URL(BASE_URI);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    InputStream is = con.getInputStream();
+
+                    // This prevents the duplicate requests.
+                    // is.close();
+                } catch (IOException e) {
+                }
+            });
+```
+
 
 ## Example
 
